@@ -491,7 +491,7 @@ class Cmd(cmd.Cmd):
     multilineCommands = []
     
     def _init_parser(self):
-        r'''
+        r"""
         >>> c = Cmd()
         >>> c.multilineCommands = ['multiline']
         >>> c.case_insensitive = True
