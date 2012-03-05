@@ -84,22 +84,22 @@ class OptionParser(optparse.OptionParser):
         raise optparse.OptParseError(msg)
         
 def remaining_args(oldArgs, newArgList):
-    '''
+    """
     Preserves the spacing originally in the argument after
     the removal of options.
-    
+
     >>> remaining_args('-f bar   bar   cow', ['bar', 'cow'])
     'bar   cow'
-    '''
+    """
     pattern = '\s+'.join(re.escape(a) for a in newArgList) + '\s*$'
     matchObj = re.search(pattern, oldArgs)
     return oldArgs[matchObj.start():]
    
 def _attr_get_(obj, attr):
-    '''Returns an attribute's value, or None (no error) if undefined.
+    """Returns an attribute's value, or None (no error) if undefined.
        Analagous to .get() for dictionaries.  Useful when checking for
        value of options that may not have been defined on a given
-       method.'''
+       method."""
     try:
         return getattr(obj, attr)
     except AttributeError:
@@ -110,7 +110,7 @@ optparse.Values.get = _attr_get_
 options_defined = [] # used to distinguish --options from SQL-style --comments
 
 def options(option_list, arg_desc="arg"):
-    '''Used as a decorator and passed a list of optparse-style options,
+    """Used as a decorator and passed a list of optparse-style options,
        alters a cmd2 method to populate its ``opts`` argument from its
        raw text argument.
 
@@ -124,7 +124,7 @@ def options(option_list, arg_desc="arg"):
        def do_something(self, arg, opts):
            if opts.quick:
                self.fast_button = True
-       '''
+       """
     if not isinstance(option_list, list):
         option_list = [option_list]
     for opt in option_list:
@@ -269,9 +269,9 @@ class ParsedString(str):
         return new
         
 class StubbornDict(dict):
-    '''Dictionary that tolerates many input formats.
+    """Dictionary that tolerates many input formats.
     Create it with stubbornDict(arg) factory function.
-    
+
     >>> d = StubbornDict(large='gross', small='klein')
     >>> sorted(d.items())
     [('large', 'gross'), ('small', 'klein')]
@@ -281,7 +281,7 @@ class StubbornDict(dict):
     >>> d += '   girl Frauelein, Maedchen\\n\\n shoe schuh'
     >>> sorted(d.items())
     [('girl', 'Frauelein, Maedchen'), ('large', 'gross'), ('plaid', ''), ('plain', ''), ('shoe', 'schuh'), ('small', 'klein')]
-    '''    
+    """
     def update(self, arg):
         dict.update(self, StubbornDict.to_dict(arg))
     append = update
@@ -299,7 +299,7 @@ class StubbornDict(dict):
         
     @classmethod
     def to_dict(cls, arg):
-        'Generates dictionary from string or list of strings'
+        """Generates dictionary from string or list of strings"""
         if hasattr(arg, 'splitlines'):
             arg = arg.splitlines()
         if hasattr(arg, '__reversed__'):
@@ -319,14 +319,14 @@ class StubbornDict(dict):
         return result
 
 def stubbornDict(*arg, **kwarg):
-    '''
+    """
     >>> sorted(stubbornDict('cow a bovine\\nhorse an equine').items())
     [('cow', 'a bovine'), ('horse', 'an equine')]
     >>> sorted(stubbornDict(['badger', 'porcupine a poky creature']).items())
     [('badger', ''), ('porcupine', 'a poky creature')]
     >>> sorted(stubbornDict(turtle='has shell', frog='jumpy').items())
     [('frog', 'jumpy'), ('turtle', 'has shell')]
-    '''
+    """
     result = {}
     for a in arg:
         result.update(StubbornDict.to_dict(a))
@@ -350,7 +350,7 @@ class EmptyStatement(Exception):
     pass
 
 def ljust(x, width, fillchar=' '):
-    'analogous to str.ljust, but works for lists'
+    """analogous to str.ljust, but works for lists"""
     if hasattr(x, 'ljust'):
         return x.ljust(width, fillchar)
     else:
@@ -396,7 +396,7 @@ class Cmd(cmd.Cmd):
         ''')
     
     def poutput(self, msg):
-        '''Convenient shortcut for self.stdout.write(); adds newline if necessary.'''
+        """Convenient shortcut for self.stdout.write(); adds newline if necessary."""
         if msg:
             self.stdout.write(msg)
             if msg[-1] != '\n':
@@ -433,18 +433,18 @@ class Cmd(cmd.Cmd):
                   'underline':{True:'\x1b[4m',False:'\x1b[24m'}}
     colors = (platform.system() != 'Windows')
     def colorize(self, val, color):
-        '''Given a string (``val``), returns that string wrapped in UNIX-style 
+        """Given a string (``val``), returns that string wrapped in UNIX-style
            special characters that turn on (and then off) text color and style.
            If the ``colors`` environment paramter is ``False``, or the application
            is running on Windows, will return ``val`` unchanged.
            ``color`` should be one of the supported strings (or styles):
-           red/blue/green/cyan/magenta, bold, underline'''
+           red/blue/green/cyan/magenta, bold, underline"""
         if self.colors and (self.stdout == self.initial_stdout):
             return self.colorcodes[color][True] + val + self.colorcodes[color][False]
         return val
 
     def do_cmdenvironment(self, args):
-        '''Summary report of interactive parameters.'''
+        """Summary report of interactive parameters."""
         self.stdout.write("""
         Commands are %(casesensitive)scase-sensitive.
         Commands may be terminated with: %(terminators)s
@@ -944,16 +944,16 @@ class Cmd(cmd.Cmd):
     do_q = do_quit
     
     def select(self, options, prompt='Your choice? '):
-        '''Presents a numbered menu to the user.  Modelled after
+        """Presents a numbered menu to the user.  Modelled after
            the bash shell's SELECT.  Returns the item chosen.
-           
+
            Argument ``options`` can be:
 
              | a single string -> will be split into one-word options
              | a list of strings -> will be offered as options
-             | a list of tuples -> interpreted as (value, text), so 
+             | a list of tuples -> interpreted as (value, text), so
                                    that the return value can differ from
-                                   the text advertised to the user '''
+                                   the text advertised to the user """
         if isinstance(options, basestring):
             options = zip(options.split(), options.split())
         fulloptions = []
@@ -980,7 +980,7 @@ class Cmd(cmd.Cmd):
     @options([make_option('-l', '--long', action="store_true",
                  help="describe function of parameter")])    
     def do_show(self, arg, opts):
-        '''Shows value of a parameter.'''
+        """Shows value of a parameter."""
         param = arg.strip().lower()
         result = {}
         maxlen = 0
@@ -998,10 +998,10 @@ class Cmd(cmd.Cmd):
             raise NotImplementedError("Parameter '%s' not supported (type 'show' for list of parameters)." % param)
     
     def do_set(self, arg):
-        '''
+        """
         Sets a cmd2 parameter.  Accepts abbreviated parameter names so long
-        as there is no ambiguity.  Call without arguments for a list of 
-        settable parameters with their values.'''
+        as there is no ambiguity.  Call without arguments for a list of
+        settable parameters with their values."""
         try:
             statement, paramName, val = arg.parsed.raw.split(None, 2)
             val = val.strip()
@@ -1029,21 +1029,21 @@ class Cmd(cmd.Cmd):
             self.do_show(arg)
                 
     def do_pause(self, arg):
-        'Displays the specified text then waits for the user to press RETURN.'
+        """Displays the specified text then waits for the user to press RETURN."""
         raw_input(arg + '\n')
         
     def do_shell(self, arg):
-        'execute a command as if at the OS prompt.'
+        """execute a command as if at the OS prompt."""
         os.system(arg)
                 
     def do_py(self, arg):  
-        '''
+        """
         py <command>: Executes a Python command.
         py: Enters interactive Python mode.
         End with ``Ctrl-D`` (Unix) / ``Ctrl-Z`` (Windows), ``quit()``, '`exit()``.
         Non-python commands can be issued with ``cmd("your command")``.
         Run python code from external files with ``run("filename.py")``
-        '''
+        """
         self.pystate['self'] = self
         arg = arg.parsed.raw[2:].strip()
         localvars = (self.locals_in_py and self.pystate) or {}
@@ -1204,10 +1204,10 @@ class Cmd(cmd.Cmd):
         return result
         
     def do__relative_load(self, arg=None):
-        '''
+        """
         Runs commands in script at file or URL; if this is called from within an
-        already-running script, the filename will be interpreted relative to the 
-        already-running script's directory.'''
+        already-running script, the filename will be interpreted relative to the
+        already-running script's directory."""
         if arg:
             arg = arg.split(None, 1)
             targetname, args = arg[0], (arg[1:] or [''])[0]
@@ -1302,27 +1302,27 @@ class HistoryItem(str):
         return self.listformat % (self.idx, str(self))
         
 class History(list):
-    '''A list of HistoryItems that knows how to respond to user requests.
+    """A list of HistoryItems that knows how to respond to user requests.
     >>> h = History([HistoryItem('first'), HistoryItem('second'), HistoryItem('third'), HistoryItem('fourth')])
     >>> h.span('-2..')
     ['third', 'fourth']
     >>> h.span('2..3')
     ['second', 'third']
     >>> h.span('3')
-    ['third']    
+    ['third']
     >>> h.span(':')
     ['first', 'second', 'third', 'fourth']
     >>> h.span('2..')
     ['second', 'third', 'fourth']
     >>> h.span('-1')
-    ['fourth']    
+    ['fourth']
     >>> h.span('-2..-3')
-    ['third', 'second']      
+    ['third', 'second']
     >>> h.search('o')
     ['second', 'fourth']
     >>> h.search('/IR/')
     ['first', 'third']
-    '''
+    """
     def zero_based_index(self, onebased):
         result = onebased
         if result > 0:
@@ -1448,8 +1448,8 @@ class Statekeeper(object):
                 setattr(self.obj, attrib, getattr(self, attrib))        
 
 class Borg(object):
-    '''All instances of any Borg subclass will share state.
-    from Python Cookbook, 2nd Ed., recipe 6.16'''
+    """All instances of any Borg subclass will share state.
+    from Python Cookbook, 2nd Ed., recipe 6.16"""
     _shared_state = {}
     def __new__(cls, *a, **k):
         obj = object.__new__(cls, *a, **k)
@@ -1457,8 +1457,8 @@ class Borg(object):
         return obj
     
 class OutputTrap(Borg):
-    '''Instantiate  an OutputTrap to divert/capture ALL stdout output.  For use in unit testing.
-    Call `tearDown()` to return to normal output.'''
+    """Instantiate  an OutputTrap to divert/capture ALL stdout output.  For use in unit testing.
+    Call `tearDown()` to return to normal output."""
     def __init__(self):
         self.contents = ''
         self.old_stdout = sys.stdout
@@ -1474,9 +1474,9 @@ class OutputTrap(Borg):
         self.contents = ''
         
 class Cmd2TestCase(unittest.TestCase):
-    '''Subclass this, setting CmdApp, to make a unittest.TestCase class
+    """Subclass this, setting CmdApp, to make a unittest.TestCase class
        that will execute the commands in a transcript file and expect the results shown.
-       See example.py'''
+       See example.py"""
     CmdApp = None
     def fetchTranscripts(self):
         self.transcripts = {}
