@@ -38,7 +38,7 @@ import glob
 import traceback
 import platform
 import copy
-from code import InteractiveConsole, InteractiveInterpreter
+from code import InteractiveConsole
 from optparse import make_option
 import pyparsing
 
