@@ -421,7 +421,7 @@ class Cmd(cmd.Cmd):
             editor = 'notepad'
         else:
             for editor in ['gedit', 'kate', 'vim', 'emacs', 'nano', 'pico']:
-                if subprocess.Popen(['which', editor], stdout=subprocess.PIPE).communicate()[0]:
+                if subprocess.Popen(['which', editor], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]:
                     break
 
     colorcodes =    {'bold':{True:'\x1b[1m',False:'\x1b[22m'},
