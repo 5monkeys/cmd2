@@ -479,7 +479,7 @@ class Cmd(cmd.Cmd):
     def do_shortcuts(self, args):
         """Lists single-key shortcuts available."""
         result = "\n".join('%s: %s' % (sc[0], sc[1]) for sc in sorted(self.shortcuts))
-        self.stdout.write("Single-key shortcuts for other commands:\n%s\n" % (result))
+        self.stdout.write("Single-key shortcuts for other commands:\n%s\n" % result)
 
     prefixParser = pyparsing.Empty()
     commentGrammars = pyparsing.Or([pyparsing.pythonStyleComment, pyparsing.cStyleComment])
@@ -499,21 +499,21 @@ class Cmd(cmd.Cmd):
         >>> print (c.parser.parseString('').dump())
         []
         >>> print (c.parser.parseString('').dump())
-        []        
+        []
         >>> print (c.parser.parseString('/* empty command */').dump())
-        []        
+        []
         >>> print (c.parser.parseString('plainword').dump())
         ['plainword', '']
         - command: plainword
         - statement: ['plainword', '']
-          - command: plainword        
+          - command: plainword
         >>> print (c.parser.parseString('termbare;').dump())
         ['termbare', '', ';', '']
         - command: termbare
         - statement: ['termbare', '', ';']
           - command: termbare
           - terminator: ;
-        - terminator: ;        
+        - terminator: ;
         >>> print (c.parser.parseString('termbare; suffx').dump())
         ['termbare', '', ';', 'suffx']
         - command: termbare
@@ -521,7 +521,7 @@ class Cmd(cmd.Cmd):
           - command: termbare
           - terminator: ;
         - suffix: suffx
-        - terminator: ;        
+        - terminator: ;
         >>> print (c.parser.parseString('barecommand').dump())
         ['barecommand', '']
         - command: barecommand
@@ -576,7 +576,7 @@ class Cmd(cmd.Cmd):
         - outputTo: afile.txt
         - statement: ['output', 'into']
           - args: into
-          - command: output   
+          - command: output
         >>> print (c.parser.parseString('output into;sufx | pipethrume plz > afile.txt').dump())
         ['output', 'into', ';', 'sufx', '|', ' pipethrume plz', '>', 'afile.txt']
         - args: into
@@ -615,10 +615,10 @@ class Cmd(cmd.Cmd):
           - args: > inside
           - command: has
           - terminator: ;
-        - terminator: ;        
+        - terminator: ;
         >>> print (c.parser.parseString('multiline has > inside an unfinished command').dump())
         ['multiline', ' has > inside an unfinished command']
-        - multilineCommand: multiline        
+        - multilineCommand: multiline
         >>> print (c.parser.parseString('multiline has > inside;').dump())
         ['multiline', 'has > inside', ';', '']
         - args: has > inside
@@ -627,7 +627,7 @@ class Cmd(cmd.Cmd):
           - args: has > inside
           - multilineCommand: multiline
           - terminator: ;
-        - terminator: ;        
+        - terminator: ;
         >>> print (c.parser.parseString('multiline command /* with comment in progress;').dump())
         ['multiline', ' command /* with comment in progress;']
         - multilineCommand: multiline
@@ -665,7 +665,7 @@ class Cmd(cmd.Cmd):
         - statement: ['what', 'if "quoted strings /* seem to " start comments?']
           - args: if "quoted strings /* seem to " start comments?
           - command: what
-        '''
+        """
         #outputParser = (pyparsing.Literal('>>') | (pyparsing.WordStart() + '>') | pyparsing.Regex('[^=]>'))('output')
         outputParser = (pyparsing.Literal(self.redirector *2) | \
                        (pyparsing.WordStart() + self.redirector) | \
@@ -921,7 +921,7 @@ class Cmd(cmd.Cmd):
                     line = self.cmdqueue.pop(0)
                 else:
                     line = self.pseudo_raw_input(self.prompt)
-                if (self.echo) and (isinstance(self.stdin, file)):
+                if self.echo and isinstance(self.stdin, file):
                     self.stdout.write(line + '\n')
                 stop = self.onecmd_plus_hooks(line)
             self.postloop()
@@ -1181,9 +1181,9 @@ class Cmd(cmd.Cmd):
             f = open(os.path.expanduser(fname), 'w')
             f.write(saveme)
             f.close()
-            self.pfeedback('Saved to %s' % (fname))
+            self.pfeedback('Saved to %s' % fname)
         except Exception, e:
-            self.perror('Error saving %s' % (fname))
+            self.perror('Error saving %s' % fname)
             raise
             
     def read_file_or_url(self, fname):
@@ -1248,7 +1248,7 @@ class Cmd(cmd.Cmd):
         arg is string -> run most recent command by string search
         arg is /enclosed in forward-slashes/ -> run most recent by regex
         """        
-        'run [N]: runs the SQL that was run N commands ago'
+        # run [N]: runs the SQL that was run N commands ago
         runme = self.last_matching(arg)
         self.pfeedback(runme)
         if runme:
@@ -1403,7 +1403,7 @@ class History(list):
                     return finder.search(hi)
             else:
                 def isin(hi):
-                    return (getme.lower() in hi.lowercase)
+                    return getme.lower() in hi.lowercase
             return [itm for itm in self if isin(itm)]
 
 class NotSettableError(Exception):
