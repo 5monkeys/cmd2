@@ -1528,7 +1528,7 @@ class Cmd2TestCase(unittest.TestCase):
                 except StopIteration:
                     raise (StopIteration, 
                            'Transcript broke off while reading command beginning at line %d with\n%s' 
-                           % (command[0]))
+                           % (lineNum, command[0]))
                 lineNum += 1
             command = ''.join(command)               
             # Send the command into the application and capture the resulting output
